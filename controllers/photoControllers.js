@@ -3,8 +3,18 @@ const photo = require('../models/Photos'); // oluşturduğum schemayı aldım
 const randomId = require('random-id');
 
 exports.getAllPhotos = async (req, res) => {
-  const photos = await photo.find({}).sort({ dateCreated: 'desc' }); //desc: en son eklenenler en üstte olacak şekiilde sıralar
-  res.render('index', { photos });
+  const page = req.query.page || 1
+  const photosPerPage = 2;
+  const totalphotos = await photo.find().countDocuments();
+  const photos = await photo.find({}).sort({ dateCreated: 'desc' }).skip((page - 1) * photosPerPage).limit(photosPerPage);
+  res.render('index', {
+    photos: photos,
+    current: page,
+    pages: Math.ceil(totalphotos / photosPerPage)
+  });
+  // console.log(req.query);
+  // const photos = await photo.find({}).sort({ dateCreated: 'desc' }); //desc: en son eklenenler en üstte olacak şekiilde sıralar
+  // res.render('index', { photos });
 };
 
 exports.updatePhoto = async (req, res) => {
@@ -37,7 +47,6 @@ exports.createPhoto = async (req, res) => {
   var len = 5;
   var pattern = 'aA0';
   let imageid = randomId(len, pattern);
-  console.log(imageid);
   let uploadPath =
     __dirname +
     '/../public/uploads/' +
