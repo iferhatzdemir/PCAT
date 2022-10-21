@@ -14,7 +14,7 @@ const app = express();
 //Database connect
 mongoose
   .connect(
-    "mongodb+srv://iferhatzdemir:F3rh4t32.@cluster0.zh7xhmr.mongodb.net/pcat-db?retryWrites=true&w=majority"
+    "DB Connection Uri"
   )
   .then(() => {
     console.log("DB Connected");
