@@ -1,44 +1,53 @@
-const express = require('express');
-const ejs = require('ejs');
-const mongoose = require('mongoose');
-const fileUpload = require('express-fileupload');
-const photoController = require('./controllers/photoControllers');
-const pageController = require('./controllers/pageControllers');
+const express = require("express");
+const ejs = require("ejs");
+const mongoose = require("mongoose");
+const fileUpload = require("express-fileupload");
+const photoController = require("./controllers/photoControllers");
+const pageController = require("./controllers/pageControllers");
 
-const path = require('path');
+const path = require("path");
 
-const photo = require('./models/Photos'); // oluşturduğum schemayı aldım
-const methodOverride = require('method-override');
+const photo = require("./models/Photos"); // oluşturduğum schemayı aldım
+const methodOverride = require("method-override");
 const app = express();
 
 //Database connect
-mongoose.connect('mongodb://localhost/pcat-test-db');
+mongoose
+  .connect(
+    "mongodb+srv://iferhatzdemir:F3rh4t32.@cluster0.zh7xhmr.mongodb.net/pcat-db?retryWrites=true&w=majority"
+  )
+  .then(() => {
+    console.log("DB Connected");
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 //VİEW ENGİNE
-app.set('view engine', 'ejs');
+app.set("view engine", "ejs");
 
 //MİDDLEWARE
-app.use(express.static('public')); // Static dosyaları koyacağımız klasörü seçtik
+app.use(express.static("public")); // Static dosyaları koyacağımız klasörü seçtik
 app.use(express.urlencoded({ extended: true })); // Body parser
 app.use(express.json()); // Body parser
 app.use(fileUpload());
-app.use(methodOverride('_method', { methods: ['POST', 'GET'] })); //delete için gerekli olan method override  //https://www.npmjs.com/package/method-override
+app.use(methodOverride("_method", { methods: ["POST", "GET"] })); //delete için gerekli olan method override  //https://www.npmjs.com/package/method-override
 //ROUTES
-app.get('/', photoController.getAllPhotos);
+app.get("/", photoController.getAllPhotos);
 
-app.put('/photo/:id', photoController.updatePhoto);
-app.get('/about', pageController.getAboutPage);
+app.put("/photo/:id", photoController.updatePhoto);
+app.get("/about", pageController.getAboutPage);
 
-app.get('/add', pageController.getAddPage);
+app.get("/add", pageController.getAddPage);
 
-app.get('/photos/:photo_id', photoController.getPhoto);
+app.get("/photos/:photo_id", photoController.getPhoto);
 
-app.post('/photos', photoController.createPhoto);
+app.post("/photos", photoController.createPhoto);
 
-app.get('/photos/edit/:id', pageController.getEditPage);
-app.delete('/photos/:id', photoController.deletePhoto);
+app.get("/photos/edit/:id", pageController.getEditPage);
+app.delete("/photos/:id", photoController.deletePhoto);
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server ${port} portunda dinleniyor`);
 });
